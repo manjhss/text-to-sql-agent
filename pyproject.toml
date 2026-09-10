@@ -1,0 +1,7 @@
+[project]
+name = "text-to-sql-agent"
+version = "0.1.0"
+description = "let user query db using natural language"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
