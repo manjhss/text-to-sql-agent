@@ -10,12 +10,12 @@ from src.features.health.route import router as health_router
 # FastAPI runs this once on startup and once on shutdown
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    db.check_connection()
+    await db.startup()
     logger.info("application started")
 
     yield
 
-    db.dispose()
+    await db.dispose()
     logger.info("application stopped")
 
 
