@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from src.config.logger import logger
-from src.db.db import db
+from src.db.manager import db_manager as db
 from src.features.health.route import router as health_router
 
 

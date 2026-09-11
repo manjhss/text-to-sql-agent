@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from src.config.settings import settings
 
 
-class DB:
+class DBManager:
     """manages db connections and operations"""
 
     def __init__(self):
@@ -43,4 +43,4 @@ class DB:
         logger.info("database connections disposed")
 
 
-db = DB()
+db_manager = DBManager()
