@@ -1,8 +1,15 @@
 import uvicorn
 
+from src.config.settings import settings
+
 
 def main():
-    uvicorn.run("src.app:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run(
+        "src.app:app",
+        host=settings.host,
+        port=settings.port,
+        reload=True,
+    )
 
 
 if __name__ == "__main__":
