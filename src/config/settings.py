@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     host: str = Field(..., alias="HOST")
     port: int = Field(..., alias="PORT")
 
+    database_url: str = Field(..., alias="DATABASE_URL")
+
     model_config = SettingsConfigDict(
         env_file=BASE_DIR / ".env",
         env_file_encoding="utf-8",
