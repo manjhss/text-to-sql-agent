@@ -14,4 +14,5 @@ wheels/
 
 # Local sqlite databases
 *.db
+*.db-journal
 *.sqlite3
