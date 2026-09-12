@@ -29,7 +29,7 @@ class DBManager:
                 raise
 
     async def get_session(self) -> AsyncIterator[AsyncSession]:
-        """get an async db session"""
+        """return async db session"""
 
         async with AsyncSession(self.engine) as session:
             yield session

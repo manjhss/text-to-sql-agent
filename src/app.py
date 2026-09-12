@@ -7,7 +7,7 @@ from src.db.manager import db_manager as db
 from src.features.health.route import router as health_router
 
 
-# FastAPI runs this once on startup and once on shutdown
+# app runs this once on startup and once on shutdown
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await db.startup()
