@@ -6,6 +6,7 @@ from src.cache.manager import cache_manager as cache
 from src.config.logger import logger
 from src.db.manager import db_manager as db
 from src.features.health.route import router as health_router
+from src.features.query.route import router as query_router
 
 
 # app runs this once on startup and once on shutdown
@@ -30,3 +31,4 @@ app = FastAPI(
 
 
 app.include_router(health_router)
+app.include_router(query_router)
