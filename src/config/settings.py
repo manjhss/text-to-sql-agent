@@ -12,6 +12,11 @@ class Settings(BaseSettings):
 
     database_url: str = Field(..., alias="DATABASE_URL")
 
+    ollama_host: str = Field(..., alias="OLLAMA_HOST")
+    embedding_model: str = Field(..., alias="EMBEDDING_MODEL")
+
+    cache_similarity_threshold: float = Field(..., alias="CACHE_SIMILARITY_THRESHOLD")
+
     model_config = SettingsConfigDict(
         env_file=BASE_DIR / ".env",
         env_file_encoding="utf-8",

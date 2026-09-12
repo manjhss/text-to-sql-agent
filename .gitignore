@@ -9,10 +9,8 @@ wheels/
 # Virtual environments
 .venv
 
-# Env
+# Environment Variables
 .env
 
-# Local sqlite databases
-*.db
-*.db-journal
-*.sqlite3
+# Storage (db and cache)
+/storage
