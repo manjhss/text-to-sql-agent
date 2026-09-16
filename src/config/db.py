@@ -5,11 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 from src.config.logger import logger
 from src.config.settings import settings
-from src.db.modals import Base
+from src.modals import Base
 
 
-class DBManager:
-    """manages db connections and operations"""
+class DB:
+    """manages db connections"""
 
     def __init__(self):
         self.engine = create_async_engine(settings.database_url, echo=False)
@@ -41,4 +41,4 @@ class DBManager:
         logger.info("database connection disposed")
 
 
-db_manager = DBManager()
+db = DB()

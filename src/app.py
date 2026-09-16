@@ -2,9 +2,9 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from src.cache.manager import cache_manager as cache
+from src.config.cache import cache
+from src.config.db import db
 from src.config.logger import logger
-from src.db.manager import db_manager as db
 from src.features.health.route import router as health_router
 from src.features.query.route import router as query_router
 
