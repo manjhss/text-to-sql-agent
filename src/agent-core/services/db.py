@@ -63,7 +63,7 @@ class DBService(DB):
         except Exception as e:
             return False, str(e)
 
-    async def execute_sql(self, sql: str) -> str | None:
+    async def execute_sql(self, sql: str) -> Any | None:
         """execute raw sql and return response"""
 
         try:
