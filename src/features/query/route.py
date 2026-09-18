@@ -6,7 +6,7 @@ from src.features.query.schema import QueryRequest, QueryResponse
 router = APIRouter(tags=["agent"])
 
 
-@router.get("/query", status_code=200, response_model=QueryResponse)
+@router.post("/query", status_code=200, response_model=QueryResponse)
 def query(request: QueryRequest):
     try:
         query = request.query
