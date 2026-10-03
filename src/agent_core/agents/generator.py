@@ -19,29 +19,27 @@ class SQLGeneratorAgent:
         )
 
     def _clean_sql(self, raw_sql: str) -> str:
-        """
-        return clean SQL output from LLM response"""
-
-        # remove markdown code blocks
-        sql = raw_sql.replace("```sql", "").replace("```", "").strip()
-
-        # extract SQL from response (if it contains reasoning + SQL)
-        # look for SQL keywords: SELECT, WITH, INSERT, UPDATE, DELETE
-        lines = sql.split("\n")
-        sql_start_idx = None
-
-        for i, line in enumerate(lines):
-            if any(
-                keyword in line.upper()
-                for keyword in ["SELECT", "WITH", "INSERT", "UPDATE", "DELETE"]
-            ):
-                sql_start_idx = i
-                break
-
-        if sql_start_idx is not None:
-            sql = "\n".join(lines[sql_start_idx:])
-
-        return sql.strip()
+        """extract clean SQL from an LLM response."""
+    
+        sql = raw_sql.strip()
+    
+        # Remove markdown fences
+        sql = sql.replace("```sql", "").replace("```", "").strip()
+    
+        # Find the beginning of the SQL statement
+        import re
+        match = re.search(
+            r"\b(SELECT|WITH|INSERT|UPDATE|DELETE)\b",
+            sql,
+            re.IGNORECASE,
+        )
+    
+        if not match:
+            raise ValueError("No SQL query found in LLM response")
+    
+        sql = sql[match.start():].strip()
+    
+        return sql
 
     def generate(self, state: AgentState) -> dict:
         """
