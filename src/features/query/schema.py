@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+from typing import Optional
 
-# update them, later
+from pydantic import BaseModel
 
 
 class QueryRequest(BaseModel):
@@ -8,4 +8,10 @@ class QueryRequest(BaseModel):
 
 
 class QueryResponse(BaseModel):
-    status: str
+    success: bool
+    raw_sql: Optional[str] = None
+    query_result: Optional[str] = None
+    error: Optional[str] = None
+    iterations: int = 0
+    cache_hit: bool = False
+    plan: Optional[str] = None
