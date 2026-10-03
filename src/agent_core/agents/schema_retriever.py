@@ -1,10 +1,10 @@
 from langchain_core.prompts import ChatPromptTemplate
-from loguru import logger
 
 from src.agent_core.prompts import COLUMN_SELECTION_PROMPT, TABLE_SELECTION_PROMPT
 from src.agent_core.services.db import db_service as db
 from src.agent_core.services.llm import LLMService
 from src.agent_core.state import AgentState
+from src.config.logger import logger
 
 
 class SchemaRetrieverAgent:

@@ -1,11 +1,9 @@
-from core.state import AgentState
-from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
-from langchain_groq import ChatGroq
-from loguru import logger
+from langchain_core.prompts import ChatPromptTemplate
 
-from config import settings
 from src.agent_core.prompts import SQL_GENERATION_PROMPT
 from src.agent_core.services.llm import LLMService
+from src.agent_core.state import AgentState
+from src.config.logger import logger
 
 
 class SQLGeneratorAgent:
