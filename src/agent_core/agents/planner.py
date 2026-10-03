@@ -1,7 +1,7 @@
 from langchain_core.prompts import ChatPromptTemplate
 
 from src.agent_core.prompts import PLANNER_PROMPT
-from src.agent_core.services.llm import LLMService
+from src.agent_core.services.llm import llm_service as llm
 from src.agent_core.state import AgentState
 from src.config.logger import logger
 
@@ -10,7 +10,7 @@ class PlannerAgent:
     """decomposes natural language questions into structured logical plans"""
     
     def __init__(self):
-        self.chat = LLMService().chat
+        self.llm_chat = llm.chat
         
         # system prompt for logical planning
         self.prompt = ChatPromptTemplate.from_messages([
@@ -18,7 +18,7 @@ class PlannerAgent:
             ("user", "{query}")
         ])
         
-        self.chain = self.prompt | self.chat
+        self.chain = self.prompt | self.llm_chat
     
     def plan(self, state: AgentState) -> dict:
         """generate a logical plan for the question."""

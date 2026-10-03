@@ -1,7 +1,7 @@
 from langchain_core.prompts import ChatPromptTemplate
 
 from src.agent_core.prompts import SQL_GENERATION_PROMPT
-from src.agent_core.services.llm import LLMService
+from src.agent_core.services.llm import llm_service as llm
 from src.agent_core.state import AgentState
 from src.config.logger import logger
 
@@ -12,7 +12,7 @@ class SQLGeneratorAgent:
     """
 
     def __init__(self):
-        self.chat = LLMService().chat
+        self.llm_chat = llm.chat
 
         self.generation_prompt = ChatPromptTemplate.from_messages(
             [("system", SQL_GENERATION_PROMPT), ("user", "Generate the SQL query:")]
@@ -63,7 +63,7 @@ class SQLGeneratorAgent:
 
         try:
             # Step 1: generate SQL
-            chain = self.generation_prompt | self.chat
+            chain = self.generation_prompt | self.llm_chat
             response = chain.invoke(
                 {"query": query, "plan": plan, "schema_context": schema_context}
             )

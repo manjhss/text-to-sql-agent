@@ -3,7 +3,7 @@ from loguru import logger
 
 from src.agent_core.prompts import DEBUG_SQL_FAILURE_PROMPT
 from src.agent_core.services.db import db_service as db
-from src.agent_core.services.llm import LLMService
+from src.agent_core.services.llm import llm_service as llm
 from src.agent_core.state import AgentState
 from src.config.settings import settings
 
@@ -14,7 +14,7 @@ class CriticAgent:
     """
 
     def __init__(self):
-        self.chat = LLMService().chat
+        self.llm_chat = llm.chat
 
         # prompt for debugging failure
         self.debug_failure_prompt = ChatPromptTemplate.from_messages(
@@ -143,7 +143,7 @@ class CriticAgent:
         error = state.get("error", "")
 
         try:
-            chain = self.debug_failure_prompt | self.chat
+            chain = self.debug_failure_prompt | self.llm_chat
 
             response = chain.invoke(
                 {

@@ -2,7 +2,7 @@ from langchain_core.prompts import ChatPromptTemplate
 
 from src.agent_core.prompts import COLUMN_SELECTION_PROMPT, TABLE_SELECTION_PROMPT
 from src.agent_core.services.db import db_service as db
-from src.agent_core.services.llm import LLMService
+from src.agent_core.services.llm import llm_service as llm
 from src.agent_core.state import AgentState
 from src.config.logger import logger
 
@@ -13,7 +13,7 @@ class SchemaRetrieverAgent:
     """
 
     def __init__(self):
-        self.chat = LLMService().chat
+        self.llm_chat = llm.chat
 
         # system prompt for table selection
         self.table_selection_prompt = ChatPromptTemplate.from_messages(
@@ -51,7 +51,7 @@ class SchemaRetrieverAgent:
         return relevant tables using LLM reasoning"""
 
         try:
-            chain = self.table_selection_prompt | self.chat
+            chain = self.table_selection_prompt | self.llm_chat
             response = chain.invoke(
                 {
                     "query": query,

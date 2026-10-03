@@ -3,7 +3,7 @@ from langchain_groq import ChatGroq
 from src.config.settings import settings
 
 
-class LLMService:
+class llm:
     """manages llm operations"""
 
     def __init__(self, temperature: int = 1):
@@ -14,3 +14,6 @@ class LLMService:
         self.chat = ChatGroq(
             model=self.model, temperature=self.temperature, api_key=self.api_key
         )
+
+
+llm_service = llm()
