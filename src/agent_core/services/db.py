@@ -6,17 +6,19 @@ from langchain_community.utilities import SQLDatabase
 from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.exc import SQLAlchemyError
 
-from config.settings import settings
 from src.config.db import DB
 from src.config.logger import logger
+from src.config.settings import settings
 
 
 class DBService(DB):
     """manages db operations"""
 
     def __init__(self):
-        self.db = SQLDatabase.from_uri(settings.database_url)
-        self.inspector = inspect(create_engine(settings.database_url))
+        self.database_sync_url = settings.database_url.replace("+aiosqlite", "")
+
+        self.db = SQLDatabase.from_uri(self.database_sync_url)
+        self.inspector = inspect(create_engine(self.database_sync_url))
 
     def get_all_table_names(self) -> Iterable[str]:
         """get list of all table names in the db"""
