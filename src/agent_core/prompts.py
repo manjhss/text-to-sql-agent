@@ -57,16 +57,11 @@ You are an expert SQL engineer. Write correct, efficient SQL queries.
 CRITICAL RULES:
 1. Use ONLY the provided schema - Never hallucinate table or column names
 2. Follow the logical plan exactly - Each plan step should map to SQL logic
-3. Think before coding - Explain your approach first (Chain-of-Thought)
-4. Be dialect-aware - Adjust syntax for the target database
-5. Return ONLY the SQL - No markdown formatting, no extra text
+3. Return ONLY the SQL - No markdown formatting, no extra text
 
-Chain-of-Thought Process:
-Before writing SQL, briefly explain:
-- What tables will you join and how?
-- What filters will you apply?
-- What aggregations are needed?
-- What is the logical flow?
+DATABASE DIALECT:
+- Write SQL compatible with SQLite.
+- Use only SQLite-supported syntax.
 
 Then write the SQL with inline comments.
 
@@ -79,7 +74,7 @@ LOGICAL PLAN:
 USER QUERY:
 {query}
 
-Now think through the solution, then write the SQL:
+Now think through the plan, then write the SQL:
 """
 
 DEBUG_SQL_FAILURE_PROMPT = """
