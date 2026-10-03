@@ -85,13 +85,13 @@ class CriticAgent:
 
         logger.info("CRITIC: executing and validating SQL query")
 
-        raw_query = state.get("raw_query")
-        if not raw_query:
+        raw_sql = state.get("raw_sql")
+        if not raw_sql:
             return {"error": "no SQL query to execute", "should_retry": False}
 
         try:
             # execute the query
-            result, error = await db.execute_sql(raw_query)
+            result, error = await db.execute_sql(raw_sql)
 
             if error:
                 # Query failed - prepare for debugger
@@ -172,7 +172,11 @@ class CriticAgent:
 
         except Exception as e:
             logger.error(f"reflection error: {e}")
-            return {"error": f"failed to correct SQL: {str(e)}", "should_retry": False}
+            return {
+                "error": f"failed to correct SQL: {str(e)}",
+                "iterations": iterations + 1,
+                "should_retry": False,
+            }
 
 
 # node functions for graph
