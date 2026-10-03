@@ -21,7 +21,7 @@ class AgentState(TypedDict):
     raw_sql: Optional[str]  # generated raw sql
 
     # execution phase
-    query_result: Optional[Any]  # execution result
+    query_result: Optional[Any]  # formatted execution result
 
     # error handling
     error: Optional[str]  # error message if execution failed

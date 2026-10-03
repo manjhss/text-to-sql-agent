@@ -1,5 +1,5 @@
 from collections.abc import Iterable
-from typing import Any
+from typing import Any, Optional
 
 import sqlglot
 from langchain_community.utilities import SQLDatabase
@@ -52,7 +52,7 @@ class DBService(DB):
             logger.error(f"getting metadata for failed: {table_name}: {e}")
             return {}
 
-    def validate_sql_syntax(self, sql: str) -> tuple[bool, str | None]:
+    def _validate_sql_syntax(self, sql: str) -> tuple[bool, str | None]:
         """parse/validate sql syntax"""
         try:
             # using sqlglot to parse/validate
@@ -63,15 +63,15 @@ class DBService(DB):
         except Exception as e:
             return False, str(e)
 
-    async def execute_sql(self, sql: str) -> Any | None:
+    async def execute_sql(self, sql: str) -> tuple[Any, Optional[str]]:
         """execute raw sql and return response"""
 
         try:
             # first validate syntax
-            is_valid, syntax_error = self.validate_sql_syntax(sql)
-            
+            is_valid, syntax_error = self._validate_sql_syntax(sql)
+
             if not is_valid:
-                return f"syntax error: {syntax_error}"
+                return None, f"syntax error: {syntax_error}"
 
             # execute query
             async with self.engine.connect() as conn:
@@ -80,18 +80,20 @@ class DBService(DB):
                 # fetch results for SELECT queries
                 if result.returns_rows:
                     rows = result.fetchall()
-                    return rows
+                    return rows, None
                 else:
                     return (
-                        f"query executed successfully. rows affected: {result.rowcount}"
+                        f"query executed successfully. rows affected: {result.rowcount}",
+                        None,
                     )
 
         except SQLAlchemyError as e:
             logger.error(f"sql execution error: {e}")
-            return None
+            error_msg = str(getattr(e, "orig", e))
+            return None, error_msg
         except Exception as e:
             logger.error(f"executing query failed: {e}")
-            return None
+            return None, str(e)
 
 
 db_service = DBService()

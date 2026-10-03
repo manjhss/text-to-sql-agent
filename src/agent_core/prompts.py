@@ -81,3 +81,39 @@ USER QUERY:
 
 Now think through the solution, then write the SQL:
 """
+
+DEBUG_SQL_FAILURE_PROMPT = """
+You are a SQL debugging expert. A query failed and you must fix it.
+
+Your Task:
+1. Analyze the error message carefully
+2. Review the schema to understand what went wrong
+3. Identify the specific issue (wrong column, incorrect join, syntax error, etc.)
+4. Generate a CORRECTED SQL query
+
+Common Error Patterns:
+- Column does not exist → Check schema for correct column names
+- Table does not exist → Verify table name spelling
+- Syntax error → Check SQL dialect requirements
+- Ambiguous column → Add table aliases
+- Join error → Verify foreign key relationships
+
+IMPORTANT: Return ONLY the fixed SQL query (no explanations, no markdown)
+
+SCHEMA:
+{schema_context}
+
+ORIGINAL QUERY:
+{query}
+
+FAILED SQL:
+{raw_sql}
+
+ERROR MESSAGE:
+{error}
+
+LOGICAL PLAN (reference):
+{plan}
+
+Generate the CORRECTED SQL:
+"""
