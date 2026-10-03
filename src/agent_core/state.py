@@ -33,3 +33,19 @@ class AgentState(TypedDict):
 
     # metadata
     cache_hit: Optional[bool]  # whether result came from cache
+
+
+default_state: AgentState = {
+    "query": "",
+    "plan": None,
+    "relevant_tables": None,
+    "schema_context": None,
+    "schema_metadata": None,
+    "raw_sql": None,
+    "query_result": None,
+    "error": None,
+    "error_type": None,
+    "iterations": 0,
+    "should_retry": True,
+    "cache_hit": False,
+}
