@@ -11,6 +11,6 @@ class LLMService:
         self.temperature = temperature
         self.api_key = settings.groq_api_key
 
-        self.llm = ChatGroq(
+        self.chat = ChatGroq(
             model=self.model, temperature=self.temperature, api_key=self.api_key
         )
