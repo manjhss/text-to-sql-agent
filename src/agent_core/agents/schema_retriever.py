@@ -125,7 +125,7 @@ class SchemaRetrieverAgent:
 
 
 # node function for graph
-def schema_linker_node(state: AgentState) -> dict:
+def schema_retriever(state: AgentState) -> dict:
     """graph node wrapper for SchemaRetrieverAgent"""
 
     agent = SchemaRetrieverAgent()
