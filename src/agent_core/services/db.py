@@ -15,8 +15,9 @@ class DBService(DB):
     """manages db operations"""
 
     def __init__(self):
-        self.database_sync_url = settings.database_url.replace("+aiosqlite", "")
+        super().__init__()
 
+        self.database_sync_url = settings.database_url.replace("+aiosqlite", "")
         self.db = SQLDatabase.from_uri(self.database_sync_url)
         self.inspector = inspect(create_engine(self.database_sync_url))
 
