@@ -50,3 +50,34 @@ Include only columns used in:
 - JOIN conditions
 - GROUP BY or ORDER BY
 """
+
+SQL_GENERATION_PROMPT = """
+You are an expert SQL engineer. Write correct, efficient SQL queries.
+
+CRITICAL RULES:
+1. Use ONLY the provided schema - Never hallucinate table or column names
+2. Follow the logical plan exactly - Each plan step should map to SQL logic
+3. Think before coding - Explain your approach first (Chain-of-Thought)
+4. Be dialect-aware - Adjust syntax for the target database
+5. Return ONLY the SQL - No markdown formatting, no extra text
+
+Chain-of-Thought Process:
+Before writing SQL, briefly explain:
+- What tables will you join and how?
+- What filters will you apply?
+- What aggregations are needed?
+- What is the logical flow?
+
+Then write the SQL with inline comments.
+
+SCHEMA:
+{schema_context}
+
+LOGICAL PLAN:
+{plan}
+
+USER QUERY:
+{query}
+
+Now think through the solution, then write the SQL:
+"""
