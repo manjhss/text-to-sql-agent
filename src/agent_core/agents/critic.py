@@ -139,7 +139,7 @@ class CriticAgent:
         query = state["query"]
         plan = state.get("plan", "")
         schema_context = state.get("schema_context", "")
-        raw_query = state.get("raw_query", "")
+        raw_sql = state.get("raw_sql", "")
         error = state.get("error", "")
 
         try:
@@ -150,7 +150,7 @@ class CriticAgent:
                     "query": query,
                     "plan": plan,
                     "schema_context": schema_context,
-                    "raw_query": raw_query,
+                    "raw_sql": raw_sql,
                     "error": error,
                 }
             )
@@ -165,7 +165,7 @@ class CriticAgent:
             logger.debug(f"fixed SQL: {fixed_sql}")
 
             return {
-                "raw_query": fixed_sql,
+                "raw_sql": fixed_sql,
                 "iterations": iterations + 1,
                 "should_retry": True,
             }
