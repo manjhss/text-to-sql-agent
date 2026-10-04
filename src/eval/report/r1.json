@@ -1,0 +1,210 @@
+{
+    "evaluation": "planner",
+    "date": "2026-10-04",
+    "model_context": "free model; evaluation run captured from terminal output",
+    "test_count": 8,
+    "tests": [
+        {
+            "id": "planner_001",
+            "expected": {
+                "plan": "count all transactions"
+            },
+            "actual": [
+                "1. Identify the core intent: aggregation (totaling number of orders)",
+                "2. Define atomic logical steps:",
+                "3. Specify filters, groupings, and ordering: none needed for this query",
+                "4. Define metrics and formulas explicitly: group by no specific columns, using COUNT(*)"
+            ]
+        },
+        {
+            "id": "planner_002",
+            "expected": {
+                "plan": "get products ordered by popularity score descending and return the top 5"
+            },
+            "actual": [
+                "1. Join the للمنتجات table with the الطلبات table using the common product_id column",
+                "2. Calculate the SUM(quantity) for each product in each order",
+                "3. Group the results by the products table's product_id",
+                "4. For each product group, calculate the SUM(quantity) of all order quantities",
+                "5. Calculate the popularity score for each product by dividing the calculated quantity sum by the total sum of quantities in all orders",
+                "6. Order the products by popularity score in descending order",
+                "7. Limit the result set to show the top 5 products "
+            ]
+        },
+        {
+            "id": "planner_003",
+            "expected": {
+                "plan": "calculate the average order value from transactions"
+            },
+            "actual": [
+                "1. Identify the core intent: Aggregation (calculating the average)",
+                "2. Break down into atomic logical steps:",
+                "3. Specify any necessary filters or conditions: There might be conditions on order_date or other relevant columns. We don't have enough information yet to determine these.",
+                "4. Determine the grouping and ordering: To calculate the average order value, we need to group by some common factor in the data, likely the order date or customer(s). Since it's about average order value, we should order by any relevant column (e.g., order date)."
+            ]
+        },
+        {
+            "id": "planner_004",
+            "expected": {
+                "plan": "group customers by country, count customers, and return the country with the highest count"
+            },
+            "actual": [
+                "1. Determine the table(s) containing customer information (e.g., customers, salespeople)",
+                "2. Join the tables if necessary to obtain a complete list of customers",
+                "3. Identify a unique identifier for each customer (usually a primary key)",
+                "4. Group customers by country using the unique identifier",
+                "5. Count the number of customers in each group",
+                "6. Select the country with the highest customer count",
+                "7. Optionally, output the name of the country for better understanding "
+            ]
+        },
+        {
+            "id": "planner_005",
+            "expected": {
+                "plan": "use customer behavior data and rank customers by cart abandonment rate"
+            },
+            "actual": [
+                "1. Create a table of carts with the following columns: cart_id, order_date (date when user added items to the cart), customer_id (foreign key referencing customers table), and items_added (number of items added to the cart)",
+                "2. Calculate the date_difference between today's date and the order_date for each cart row",
+                "3. Where date_difference is greater than 30 (considering 30 days since no purchase was made), insert a new row into the \"cart_abandoned\" table with cart_id, customer_id as foreign keys, and items_added as \"0\"",
+                "4. Join the \"customers\" table with the \"cart_abandoned\" table using the foreign keys (cart_id, customer_id)",
+                "5. Group the result by customer_id",
+                "6. Calculate the COUNT(cart_id) to determine the number of abandoned carts for each customer",
+                "7. Order the result by the number of abandoned carts in descending order "
+            ]
+        },
+        {
+            "id": "planner_006",
+            "expected": {
+                "plan": "group transactions by customer and return customers whose transaction count is greater than 3"
+            },
+            "actual": [
+                "1. Define a filter to select customers having more than 3 orders:",
+                "2. Join the customers table with the result of step 1:",
+                "3. Return the grouped and ordered results:"
+            ]
+        },
+        {
+            "id": "planner_007",
+            "expected": {
+                "plan": "find products with the highest margin percentage"
+            },
+            "actual": [
+                "1. Join the products table with the margins table to get additional information (e.g., product_margin)",
+                "2. Join the products table with the sales table to get sales quantity and revenue (e.g., product_sales)",
+                "3. Calculate sales_margin for each product as sales_revenue minus product_margin",
+                "4. Join the sales_margin with the margin table to ensure consistent pricing across currencies (if applicable)",
+                "5. Calculate net_margin for each product by subtracting the average cost of goods sold (COGS) for that product",
+                "6. Group products by COGS bin, product category, and vendor to control for price sensitivity and enable granular analysis",
+                "7. Calculate the average net margin for each bin, category, and vendor",
+                "8. Order the results by highest average net margin first, then highest average sales quantity, then by product category to reveal the most profitable products, while also considering sales impact and variety of products",
+                "9. Provide additional information such as product name, COGS bin, category, vendor, and sales quantity to provide the most comprehensive view of the highest margin products. "
+            ]
+        },
+        {
+            "id": "planner_008",
+            "expected": {
+                "plan": "reject destructive database operation"
+            },
+            "actual": [
+                "1. Identify the core intent: Calculating total revenue and number of orders for each year.",
+                "2. Break down into atomic logical steps:",
+                "3. Define metrics and formulas explicitly:",
+                "4. Specify filters, groupings, and ordering:"
+            ]
+        }
+    ],
+    "assessment": {
+        "strict_exact_match": "0/8 based on the pasted outputs because expected.plan is a string while actual is a list of plan steps.",
+        "semantic_manual_assessment": "approximately 2.5/8 (about 31%) using the earlier rough grading; 2 partial cases were counted as half-credit.",
+        "key_failure_patterns": [
+            "schema/table invention",
+            "unnecessary assumptions and business rules",
+            "over-planning simple queries",
+            "failure to recognize destructive intent",
+            "mismatch between expected representation and actual list-of-steps representation"
+        ]
+    },
+    "number_based_analysis": {
+        "test_count": 8,
+        "strict_exact_match": {
+            "passed": 0,
+            "failed": 8,
+            "score_percent": 0.0,
+            "note": "Exact string comparison is not an appropriate final metric here because expected.plan is a string while actual is a list of plan steps."
+        },
+        "manual_semantic_score": {
+            "full_passes": 1,
+            "partial_passes": 2,
+            "fails": 5,
+            "weighted_score": 2.0,
+            "score_percent": 25.0,
+            "calculation": "(1 full × 1 + 2 partial × 0.5) / 8 = 25%"
+        },
+        "previous_rough_score": {
+            "score": "2.5/8",
+            "score_percent": 31.25,
+            "note": "Earlier rough assessment gave approximately 2.5/8. The stricter case-by-case classification above gives 2/8 (25%)."
+        },
+        "failure_rate": {
+            "clearly_failed_cases": 5,
+            "percent": 62.5
+        },
+        "partial_or_better_rate": {
+            "cases": 3,
+            "percent": 37.5
+        },
+        "full_pass_rate": {
+            "cases": 1,
+            "percent": 12.5
+        },
+        "failure_pattern_counts": {
+            "schema_or_business_logic_invention": 4,
+            "unnecessary_assumptions_or_overplanning": 4,
+            "destructive_intent_missed": 1,
+            "incomplete_or_vague_plan": 1,
+            "output_representation_mismatch": 8
+        },
+        "interpretation": [
+            "The planner showed only 12.5% full-pass performance under the stricter manual classification.",
+            "62.5% of cases were clear failures.",
+            "37.5% were at least partially correct.",
+            "The most important recurring issue was inventing schema/business concepts that were not grounded in the query.",
+            "The output-shape mismatch affected all 8 cases, so it should be handled separately from semantic correctness."
+        ]
+    },
+    "case_scores": {
+        "planner_001": {
+            "score": 0.0,
+            "classification": "fail"
+        },
+        "planner_002": {
+            "score": 0.5,
+            "classification": "partial"
+        },
+        "planner_003": {
+            "score": 0.0,
+            "classification": "fail"
+        },
+        "planner_004": {
+            "score": 1.0,
+            "classification": "pass"
+        },
+        "planner_005": {
+            "score": 0.0,
+            "classification": "fail"
+        },
+        "planner_006": {
+            "score": 0.5,
+            "classification": "partial"
+        },
+        "planner_007": {
+            "score": 0.0,
+            "classification": "fail"
+        },
+        "planner_008": {
+            "score": 0.0,
+            "classification": "fail"
+        }
+    }
+}
