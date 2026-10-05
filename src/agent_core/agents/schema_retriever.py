@@ -46,7 +46,7 @@ class SchemaRetrieverAgent:
             ]
         )
 
-    def select_tables(self, query: str, plan: str, all_tables: list[str]) -> list[str]:
+    def _select_tables(self, query: str, plan: str, all_tables: list[str]) -> list[str]:
         """
         return relevant tables using LLM reasoning"""
 
@@ -92,7 +92,7 @@ class SchemaRetrieverAgent:
 
             # Step 2: select relevant tables using LLM
             if plan:
-                selected_tables = self.select_tables(query, plan, all_tables)
+                selected_tables = self._select_tables(query, plan, all_tables)
             else:
                 # Fallback: use first 10 tables if no plan available
                 selected_tables = all_tables[:10]
@@ -113,7 +113,7 @@ class SchemaRetrieverAgent:
             return {
                 "relevant_tables": selected_tables,
                 "schema_context": schema_context,
-                "schema_metadata": schema_metadata,
+                "schema_metadata": "",
             }
 
         except Exception as e:
