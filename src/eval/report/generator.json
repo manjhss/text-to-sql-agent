@@ -1,0 +1,87 @@
+{
+    "title": "SQL Generator Evaluation Report",
+    "purpose": "Evaluate whether the SQL generator correctly translates the logical plan into SQL.",
+    "evaluation": {
+        "total_cases": 8,
+        "full_passes": 0,
+        "partial": 5,
+        "fails": 3,
+        "full_pass_rate": "0%",
+        "partial_or_better": "62.5%"
+    },
+    "results": [
+        {
+            "id": "generator_001",
+            "expected": "SELECT COUNT(transaction_id) FROM transactions;",
+            "actual": "SELECT COUNT(*) FROM transactions;",
+            "result": "PARTIAL",
+            "analysis": "Correct count intent, but differs from expected expression."
+        },
+        {
+            "id": "generator_002",
+            "expected": "SELECT product_id, category, popularity_score FROM products ORDER BY popularity_score DESC LIMIT 5;",
+            "actual": "SELECT product_id, category, price, margin_percentage, popularity_score FROM products ORDER BY popularity_score DESC LIMIT 5;",
+            "result": "PARTIAL",
+            "analysis": "Correct ranking, but adds unnecessary columns."
+        },
+        {
+            "id": "generator_003",
+            "expected": "SELECT AVG(order_value) FROM transactions;",
+            "actual": "SELECT AVG(transactions.order_value) AS average_order_value;",
+            "result": "FAIL",
+            "analysis": "Missing FROM transactions, making the SQL invalid."
+        },
+        {
+            "id": "generator_004",
+            "expected": "SELECT country, COUNT(customer_id) AS customer_count FROM customers GROUP BY country ORDER BY customer_count DESC LIMIT 1;",
+            "actual": "SELECT country, COUNT(*) AS customer_count FROM customers GROUP BY country ORDER BY customer_count DESC LIMIT 1;",
+            "result": "PARTIAL",
+            "analysis": "Correct core logic, but uses COUNT(*) instead of COUNT(customer_id)."
+        },
+        {
+            "id": "generator_005",
+            "expected": "SELECT customer_id, COUNT(transaction_id) AS order_count FROM transactions GROUP BY customer_id HAVING COUNT(transaction_id) > 3;",
+            "actual": "SELECT customer_id, COUNT(*) AS transaction_count FROM transactions GROUP BY customer_id HAVING transaction_count > 3;",
+            "result": "PARTIAL",
+            "analysis": "Correct grouping/filtering, but changes the count expression and alias."
+        },
+        {
+            "id": "generator_006",
+            "expected": "SELECT AVG(b.avg_session_time) FROM customers c JOIN behaviors b ON c.customer_id = b.customer_id WHERE c.loyalty_score > 0.8;",
+            "actual": "SELECT AVG(behaviors.avg_session_time) AS avg_session_time_for_high_loyalty_customers FROM customers INNER JOIN behaviors ON customers.customer_id = behaviors.customer_id WHERE customers.loyalty_score >= (SELECT MIN(c.loyalty_score) FROM customers c);",
+            "result": "FAIL",
+            "analysis": "Changes the requested loyalty_score > 0.8 condition into unrelated logic."
+        },
+        {
+            "id": "generator_007",
+            "expected": "SELECT DISTINCT p.product_id, p.category FROM products p JOIN transactions t ON p.product_id = t.product_id WHERE t.device_type = 'mobile';",
+            "actual": "SELECT products.product_id, products.category, products.price FROM transactions JOIN products ON transactions.product_id = products.product_id WHERE transactions.device_type = 'mobile';",
+            "result": "PARTIAL",
+            "analysis": "Correct join/filter, but adds price and omits DISTINCT."
+        },
+        {
+            "id": "generator_008",
+            "expected": null,
+            "actual": "DELETE FROM transactions;",
+            "result": "FAIL",
+            "analysis": "Generates destructive SQL instead of rejecting it."
+        }
+    ],
+    "analysis": {
+        "summary": "The generator now produces cleaner SQL, but does not consistently preserve the intended logic.",
+        "strengths": [
+            "Mostly returns a single SQL statement.",
+            "Several queries have the correct core logic.",
+            "Previous output-format problem is largely improved."
+        ],
+        "main_problems": [
+            "Adds unnecessary columns.",
+            "Changes requested expressions or aliases.",
+            "Can generate invalid SQL.",
+            "Can change important filters.",
+            "Still generates destructive SQL."
+        ],
+        "boundary": "The generator should translate the logical plan into SQL, not invent or change requirements."
+    },
+    "conclusion": "Baseline: 0% full-pass and 62.5% partial-or-better. Future evaluation should focus on faithful translation of a correct plan."
+}
