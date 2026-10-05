@@ -1,4 +1,4 @@
-from typing import Any, Optional, TypedDict
+from typing import Any, Literal, Optional, TypedDict
 
 
 class AgentState(TypedDict):
@@ -8,6 +8,9 @@ class AgentState(TypedDict):
 
     # input
     query: str  # original user query
+    query_type: Literal[
+        "relevant", "irrelevant"
+    ]  # whether query is relevant to continue
 
     # planning phase
     plan: Optional[str]  # high-level logical plan
@@ -37,6 +40,7 @@ class AgentState(TypedDict):
 
 default_state: AgentState = {
     "query": "",
+    "query_type": "irrelevant",
     "plan": None,
     "relevant_tables": None,
     "schema_context": None,

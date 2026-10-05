@@ -6,12 +6,15 @@ from src.agent_core.agents.critic import debugger_node, executor_node
 from src.agent_core.agents.generator import generator_node
 from src.agent_core.agents.planner import planner_node
 from src.agent_core.agents.schema_retriever import schema_retriever
+from src.agent_core.intent_classifier import intent_classifier_node
 from src.agent_core.state import AgentState, default_state
 from src.config.logger import logger
 from src.config.settings import settings
 
 
-def should_continue(state: AgentState) -> Literal["debug", "end"]:
+def should_continue(
+    state: AgentState,
+) -> Literal["relevant", "irrelevant", "debug", "end"]:
     """
     determines the next step in the workflow after query execution.
 
@@ -19,6 +22,15 @@ def should_continue(state: AgentState) -> Literal["debug", "end"]:
     - if max iterations reached: end with error
     - if error occured: attempt to debug
     """
+    # if query is relevant
+    if state.get("query_type", "irrelevant") == "relevant":
+        logger.warning("query is relevant. proceed")
+        return "relevant"
+
+    # if query is irrelevant
+    if state.get("query_type", "irrelevant") == "irrelevant":
+        logger.warning("query is irrelevant. don't proceed")
+        return "irrelevant"
 
     # if max iterations reached, stop
     if state.get("iterations", 0) >= settings.max_iterations:
@@ -56,6 +68,9 @@ def build_graph() -> StateGraph:
     workflow = StateGraph(AgentState)
 
     # === ADD NODES ===
+    workflow.add_node(
+        "intent_classifier", intent_classifier_node
+    )  # classify query intent
     workflow.add_node("planner", planner_node)  # decompose question into steps
     workflow.add_node("schema_retriever", schema_retriever)  # find relevant tables
     workflow.add_node("generator", generator_node)  # generate SQL
@@ -64,7 +79,14 @@ def build_graph() -> StateGraph:
     # later add two more nodes - intent_classifier and input/output guards
 
     # === DEFINE WORKFLOW ===
-    workflow.set_entry_point("planner")
+    workflow.set_entry_point("intent_classifier")
+
+    # after execution, decide: error (debug), or give up (end)
+    workflow.add_conditional_edges(
+        "intent_classifier",
+        should_continue,
+        {"irrelevant": END, "relevant": "planner"},
+    )
 
     # linear flow through the pipeline
     workflow.add_edge("planner", "schema_retriever")
