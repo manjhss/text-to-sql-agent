@@ -1,0 +1,67 @@
+{
+    "title": "Schema Retriever Evaluation Report",
+    "purpose": "Evaluate whether the schema retriever agent selects the correct database tables for a user query.",
+    "evaluation": {
+        "metric": "Exact table-set match",
+        "total_cases": 8,
+        "correct_cases": 7,
+        "accuracy": "87.5%"
+    },
+    "results": [
+        {
+            "id": "schema_001",
+            "expected": ["transactions"],
+            "actual": ["transactions"],
+            "result": "PASS"
+        },
+        {
+            "id": "schema_002",
+            "expected": ["products"],
+            "actual": ["products", "transactions"],
+            "result": "FAIL"
+        },
+        {
+            "id": "schema_003",
+            "expected": ["customers"],
+            "actual": ["customers"],
+            "result": "PASS"
+        },
+        {
+            "id": "schema_004",
+            "expected": ["customers", "behaviors"],
+            "actual": ["behaviors", "customers"],
+            "result": "PASS"
+        },
+        {
+            "id": "schema_005",
+            "expected": ["transactions", "customers"],
+            "actual": ["customers", "transactions"],
+            "result": "PASS"
+        },
+        {
+            "id": "schema_006",
+            "expected": ["customers", "behaviors"],
+            "actual": ["behaviors", "customers"],
+            "result": "PASS"
+        },
+        {
+            "id": "schema_007",
+            "expected": ["transactions", "products"],
+            "actual": ["transactions", "products"],
+            "result": "PASS"
+        },
+        {
+            "id": "schema_008",
+            "expected": ["transactions"],
+            "actual": ["transactions"],
+            "result": "PASS"
+        }
+    ],
+    "analysis": {
+        "summary": "Correct table selection in 7 of 8 cases.",
+        "main_failure": "schema_002 selected an extra table (transactions); only products was expected.",
+        "note": "Table order does not matter.",
+        "scope": "This evaluates the agent's table-selection decision. Later schema fetching/formatting is deterministic infrastructure."
+    },
+    "conclusion": "87.5% table-selection accuracy. The main issue is selecting unnecessary extra tables."
+}
