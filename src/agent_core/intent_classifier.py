@@ -5,7 +5,7 @@ from src.agent_core.state import AgentState, default_state
 from src.config.logger import logger
 
 
-def intent_classifier_node(state: AgentState) -> dict | None:
+def intent_classifier_node(state: AgentState) -> dict:
     query = state.get("query")
 
     try:
