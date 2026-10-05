@@ -22,7 +22,7 @@ class Settings(BaseSettings):
 
     cache_similarity_threshold: float = Field(alias="CACHE_SIMILARITY_THRESHOLD")
 
-    jev_api_key: SecretStr = Field(alias="JEV_API_KEY")
+    jev_api_key: str = Field(alias="JEV_API_KEY")
 
     model_config = SettingsConfigDict(
         env_file=BASE_DIR / ".env",
