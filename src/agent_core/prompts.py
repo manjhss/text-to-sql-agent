@@ -80,15 +80,15 @@ SQL_GENERATION_PROMPT = """
 You are an expert SQL engineer. Write correct, efficient SQL queries.
 
 CRITICAL RULES:
-1. Use ONLY the provided schema - Never hallucinate table or column names
-2. Follow the logical plan exactly - Each plan step should map to SQL logic
-3. Return ONLY the SQL - No markdown formatting, no extra text
+1. Use ONLY the provided schema. Never invent table or column names.
+2. Follow the logical plan exactly.
+3. Do not add, remove, or change requirements from the logical plan.
+4. Do not add unnecessary columns, filters, joins, grouping, ordering, or queries.
+5. Return ONLY one SQL statement. No explanations, comments, or markdown.
+6. If the logical plan identifies a destructive database operation, do not generate SQL. Return exactly: REJECTED
 
 DATABASE DIALECT:
-- Write SQL compatible with SQLite.
-- Use only SQLite-supported syntax.
-
-Then write the SQL with inline comments.
+- SQLite
 
 SCHEMA:
 {schema_context}
@@ -99,7 +99,7 @@ LOGICAL PLAN:
 USER QUERY:
 {query}
 
-Now think through the plan, then write the SQL:
+Convert the logical plan into one SQL statement.
 """
 
 DEBUG_SQL_FAILURE_PROMPT = """
