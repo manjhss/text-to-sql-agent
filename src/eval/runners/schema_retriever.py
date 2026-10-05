@@ -2,7 +2,7 @@ from time import sleep
 
 from src.agent_core.agents.schema_retriever import schema_retriever
 from src.agent_core.state import AgentState, default_state
-from src.eval.test_cases.schema_retriver import schema_retriever_cases
+from src.eval.cases.schema_retriver import schema_retriever_cases
 
 for case in schema_retriever_cases:
     result = schema_retriever(

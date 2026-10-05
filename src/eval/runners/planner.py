@@ -2,7 +2,7 @@ from time import sleep
 
 from src.agent_core.agents.planner import planner_node
 from src.agent_core.state import AgentState, default_state
-from src.eval.test_cases.planner import planner_cases
+from src.eval.cases.planner import planner_cases
 
 for case in planner_cases:
     result = planner_node(

@@ -2,7 +2,7 @@ import asyncio
 
 from src.agent_core.agents.critic import executor_node
 from src.agent_core.state import AgentState, default_state
-from src.eval.test_cases.critic import validate_execute_cases
+from src.eval.cases.critic import validate_execute_cases
 
 
 async def run_executor():
