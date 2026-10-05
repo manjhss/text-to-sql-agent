@@ -1,0 +1,67 @@
+{
+  "title": "Intent Classifier Evaluation Report",
+  "purpose": "Evaluate whether the intent classifier correctly determines if a user query is relevant to the Text-to-SQL system.",
+  "evaluation": {
+    "total_cases": 8,
+    "correct_cases": 8,
+    "incorrect_cases": 0,
+    "accuracy": "100%"
+  },
+  "results": [
+    {
+      "id": "intent_001",
+      "expected": "relevant",
+      "actual": "relevant",
+      "result": "PASS"
+    },
+    {
+      "id": "intent_002",
+      "expected": "relevant",
+      "actual": "relevant",
+      "result": "PASS"
+    },
+    {
+      "id": "intent_003",
+      "expected": "relevant",
+      "actual": "relevant",
+      "result": "PASS"
+    },
+    {
+      "id": "intent_004",
+      "expected": "relevant",
+      "actual": "relevant",
+      "result": "PASS"
+    },
+    {
+      "id": "intent_005",
+      "expected": "irrelevant",
+      "actual": "irrelevant",
+      "result": "PASS"
+    },
+    {
+      "id": "intent_006",
+      "expected": "irrelevant",
+      "actual": "irrelevant",
+      "result": "PASS"
+    },
+    {
+      "id": "intent_007",
+      "expected": "irrelevant",
+      "actual": "irrelevant",
+      "result": "PASS"
+    },
+    {
+      "id": "intent_008",
+      "expected": "irrelevant",
+      "actual": "irrelevant",
+      "result": "PASS"
+    }
+  ],
+  "analysis": {
+    "summary": "The classifier correctly classified all 8 test cases.",
+    "relevant_cases": "4/4 correctly classified as relevant.",
+    "irrelevant_cases": "4/4 correctly classified as irrelevant.",
+    "schema_note": "Expected output uses 'intent', while actual output uses 'query_type'. The classification values match in all cases.",
+    "conclusion": "Current baseline accuracy is 100% (8/8)."
+  }
+}
