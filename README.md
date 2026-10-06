@@ -1,35 +1,25 @@
-# text-to-sql agent
-let user query db using natural language
+# text-to-sql agent (read-only)
+talk to db using natural language
 
 ### agent architecture
 
 ```mermaid
 flowchart LR
-    user((user))
-    intent_classifier[intent_classifier]
-    cache_in[cache]
-    answer[answer]
-    planner[planner]
-    schema_context[schema context]
-    generator[generator]
-    critic[critic]
-    cache_out[cache]
+    user((user)) --> intent_classifier[intent_classifier]
 
-    user --> intent_classifier
-    intent_classifier -- yes --> cache_in
-    intent_classifier -- no --> answer
+    intent_classifier -- relevant --> input_guardrail[input_guardrail]
+    intent_classifier -- irrelevant --> answer[answer]
 
-    cache_in -- no --> planner
-    cache_in -- yes --> answer
+    input_guardrail -- safe --> planner[planner]
+    input_guardrail -- unsafe --> answer
 
-    planner --> schema_context
-    schema_context --> generator
-    generator --> critic
+    planner --> schema_retriever[schema_retriever]
+    schema_retriever --> generator[generator]
+    generator --> executor[executor]
 
-    critic -- no --> planner
-    critic -- yes --> cache_out
-
-    cache_out -- yes --> answer
+    executor -- debug --> debugger[debugger]
+    executor -- end --> answer
+    debugger --> executor
 
     answer --> user
 ```
