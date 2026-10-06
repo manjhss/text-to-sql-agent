@@ -1,6 +1,7 @@
 from collections.abc import Iterable
 from typing import Any, Optional
 
+import aiosqlite
 import sqlglot
 from langchain_community.utilities import SQLDatabase
 from sqlalchemy import create_engine, inspect, text
@@ -77,19 +78,20 @@ class DBService(DB):
                 return None, f"syntax error: {syntax_error}"
 
             # execute query
-            async with self.engine.connect() as conn:
-                result = await conn.execute(text(sql))
+            conn = await aiosqlite.connect(self.database_url)
+            await self.configure_security(conn)
 
-                # fetch results for SELECT queries
-                if result.returns_rows:
-                    rows = result.fetchall()
-                    return rows, None
-                else:
-                    return (
-                        f"query executed successfully. rows affected: {result.rowcount}",
-                        None,
-                    )
+            cursor = await conn.execute(sql)
 
+            # fetch results for SELECT queries
+            if cursor.description is not None:
+                rows = await cursor.fetchall()
+                return rows, None
+            else:
+                return (
+                    f"query executed successfully. rows affected: {result.rowcount}",
+                    None,
+                )
         except SQLAlchemyError as e:
             logger.error(f"sql execution error: {e}")
             error_msg = str(getattr(e, "orig", e))
