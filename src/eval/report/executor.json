@@ -1,0 +1,127 @@
+{
+  "title": "Executor / SQL Validation Evaluation Report",
+  "purpose": "Evaluate SQL execution, database error handling, retry decisions, and database authorization failures.",
+  "evaluation": {
+    "total_cases": 8,
+    "correct_cases": 8,
+    "incorrect_cases": 0,
+    "accuracy": "100%"
+  },
+  "results": [
+    {
+      "id": "validate_001",
+      "expected": {
+        "error": null,
+        "should_retry": false
+      },
+      "actual": {
+        "query_result": "[(150000,)]",
+        "error": null,
+        "should_retry": false
+      },
+      "result": "PASS"
+    },
+    {
+      "id": "validate_002",
+      "expected": {
+        "error": null,
+        "should_retry": false
+      },
+      "actual": {
+        "query_result": "[(383.32926546666664,)]",
+        "error": null,
+        "should_retry": false
+      },
+      "result": "PASS"
+    },
+    {
+      "id": "validate_003",
+      "expected": {
+        "error": null,
+        "should_retry": false
+      },
+      "actual": {
+        "query_result": "[(25000,)]",
+        "error": null,
+        "should_retry": false
+      },
+      "result": "PASS"
+    },
+    {
+      "id": "validate_004",
+      "expected": {
+        "error": "<database error>",
+        "should_retry": true
+      },
+      "actual": {
+        "error": "no such column: wrong_column",
+        "error_type": "runtime_error",
+        "query_result": null,
+        "should_retry": true
+      },
+      "result": "PASS"
+    },
+    {
+      "id": "validate_005",
+      "expected": {
+        "error": "<database error>",
+        "should_retry": true
+      },
+      "actual": {
+        "error": "no such table: nonexistent_table",
+        "error_type": "runtime_error",
+        "query_result": null,
+        "should_retry": true
+      },
+      "result": "PASS"
+    },
+    {
+      "id": "validate_006",
+      "expected": {
+        "error": null,
+        "should_retry": false
+      },
+      "actual": {
+        "query_result": "[('CUST000001', 5), ('CUST000002', 2), ('CUST000003', 6), ('CUST000004', 5), ('CUST000005', 4)]",
+        "error": null,
+        "should_retry": false
+      },
+      "result": "PASS"
+    },
+    {
+      "id": "validate_007",
+      "expected": {
+        "error": null,
+        "should_retry": false
+      },
+      "actual": {
+        "query_result": "[('Automotive', 19969), ('Beauty', 19917), ('Books', 18790), ('Electronics', 16587), ('Fashion', 19561)]",
+        "error": null,
+        "should_retry": false
+      },
+      "result": "PASS"
+    },
+    {
+      "id": "validate_008",
+      "expected": {
+        "error": "<operation should be rejected>",
+        "should_retry": false
+      },
+      "actual": {
+        "error": "not authorized",
+        "error_type": "authorization_error",
+        "query_result": null,
+        "should_retry": false
+      },
+      "result": "PASS"
+    }
+  ],
+  "analysis": {
+    "summary": "All 8 test cases passed.",
+    "normal_execution": "Valid SQL executed successfully without retry.",
+    "runtime_errors": "Invalid column and missing table errors were classified as runtime errors and marked retryable.",
+    "authorization": "The database rejected the unauthorized operation, and the executor classified it as an authorization error with should_retry=False.",
+    "important_observation": "Database-level security successfully blocked the unauthorized operation. Guardrails are separate and are not part of this evaluation.",
+    "conclusion": "Current executor baseline is 100% (8/8)."
+  }
+}
