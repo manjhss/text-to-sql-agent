@@ -6,15 +6,40 @@ from src.agent_core.agents.critic import debugger_node, executor_node
 from src.agent_core.agents.generator import generator_node
 from src.agent_core.agents.planner import planner_node
 from src.agent_core.agents.schema_retriever import schema_retriever
+from src.agent_core.input_guardrail import input_guardrail_node
 from src.agent_core.intent_classifier import intent_classifier_node
 from src.agent_core.state import AgentState, default_state
 from src.config.logger import logger
 from src.config.settings import settings
 
 
-def should_continue(
-    state: AgentState,
-) -> Literal["relevant", "irrelevant", "debug", "end"]:
+def route_intent(state: AgentState) -> Literal["relevant", "irrelevant"]:
+    """
+    determines whether to continue based on query relevance
+    """
+
+    if state.get("query_type", "irrelevant") == "irrelevant":
+        logger.warning("query is irrelevant - ending workflow")
+        return "irrelevant"
+
+    logger.info("query is relevant - proceeding to input guardrail")
+    return "relevant"
+
+
+def route_guardrail(state: AgentState) -> Literal["safe", "unsafe"]:
+    """
+    determines whether to continue based on input safety
+    """
+
+    if state.get("input_guardrail", "unsafe") == "unsafe":
+        logger.warning("input is unsafe - ending workflow")
+        return "unsafe"
+
+    logger.info("input is safe - proceeding to planner")
+    return "safe"
+
+
+def should_continue(state: AgentState) -> Literal["debug", "end"]:
     """
     determines the next step in the workflow after query execution.
 
@@ -22,15 +47,6 @@ def should_continue(
     - if max iterations reached: end with error
     - if error occured: attempt to debug
     """
-    # if query is relevant
-    if state.get("query_type", "irrelevant") == "relevant":
-        logger.warning("query is relevant. proceed")
-        return "relevant"
-
-    # if query is irrelevant
-    if state.get("query_type", "irrelevant") == "irrelevant":
-        logger.warning("query is irrelevant. don't proceed")
-        return "irrelevant"
 
     # if max iterations reached, stop
     if state.get("iterations", 0) >= settings.max_iterations:
@@ -54,12 +70,14 @@ def build_graph() -> StateGraph:
     builds the langgraph workflow for the Text-to-SQL agent
 
     workflow:
-        1. Plan: Break down the question into logical steps
-        2. Schema Retriever: Find relevant tables/columns
-        3. Generate: Write SQL query
-        4. Execute: Run query and validate
-        5. On error: Debug and retry (up to max_iterations)
-        6. On success: End
+        1. Intent Classifier: Reject non-database questions
+        2. Input Guardrail: Reject unsafe or injected input
+        3. Plan: Break down the question into logical steps
+        4. Schema Retriever: Find relevant tables/columns
+        5. Generate: Write SQL query
+        6. Execute: Run query and validate
+        7. On error: Debug and retry (up to max_iterations)
+        8. On success: End
     """
 
     logger.info("building Text-to-SQL agent graph...")
@@ -71,21 +89,28 @@ def build_graph() -> StateGraph:
     workflow.add_node(
         "intent_classifier", intent_classifier_node
     )  # classify query intent
+    workflow.add_node("input_guardrail", input_guardrail_node)  # screen unsafe input
     workflow.add_node("planner", planner_node)  # decompose question into steps
     workflow.add_node("schema_retriever", schema_retriever)  # find relevant tables
     workflow.add_node("generator", generator_node)  # generate SQL
     workflow.add_node("executor", executor_node)  # execute and validate
     workflow.add_node("debugger", debugger_node)  # fix errors if any
-    # later add two more nodes - intent_classifier and input/output guards
 
     # === DEFINE WORKFLOW ===
     workflow.set_entry_point("intent_classifier")
 
-    # after execution, decide: error (debug), or give up (end)
+    # after intent classification, decide: irrelevant (end) or relevant (guardrail)
     workflow.add_conditional_edges(
         "intent_classifier",
-        should_continue,
-        {"irrelevant": END, "relevant": "planner"},
+        route_intent,
+        {"irrelevant": END, "relevant": "input_guardrail"},
+    )
+
+    # after input guardrail, decide: unsafe (end) or safe (planner)
+    workflow.add_conditional_edges(
+        "input_guardrail",
+        route_guardrail,
+        {"unsafe": END, "safe": "planner"},
     )
 
     # linear flow through the pipeline

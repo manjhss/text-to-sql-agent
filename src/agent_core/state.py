@@ -11,6 +11,9 @@ class AgentState(TypedDict):
     query_type: Literal[
         "relevant", "irrelevant"
     ]  # whether query is relevant to continue
+    input_guardrail: Literal[
+        "safe", "unsafe"
+    ]  # whether user input is safe to process
 
     # planning phase
     plan: Optional[str]  # high-level logical plan
@@ -41,6 +44,7 @@ class AgentState(TypedDict):
 default_state: AgentState = {
     "query": "",
     "query_type": "irrelevant",
+    "input_guardrail": "unsafe",
     "plan": None,
     "relevant_tables": None,
     "schema_context": None,
