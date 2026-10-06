@@ -31,7 +31,10 @@ class CriticAgent:
 
         error_lower = error_msg.lower()
 
-        if "column" in error_lower and (
+        # database-level security/authorization rejection (e.g. sqlite authorizer deny)
+        if "not authorized" in error_lower or "authorization" in error_lower:
+            return "authorization_error"
+        elif "column" in error_lower and (
             "does not exist" in error_lower or "not found" in error_lower
         ):
             return "column_not_found"
@@ -98,11 +101,12 @@ class CriticAgent:
                 logger.warning(f"query execution failed: {error}")
                 error_type = self._classify_error(error)
 
+                # security rejections are terminal - retrying cannot fix them
                 return {
                     "error": error,
                     "error_type": error_type,
                     "query_result": None,
-                    "should_retry": True,
+                    "should_retry": error_type != "authorization_error",
                 }
             else:
                 # query succeeded
