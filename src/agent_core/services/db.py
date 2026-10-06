@@ -78,7 +78,7 @@ class DBService(DB):
                 return None, f"syntax error: {syntax_error}"
 
             # execute query
-            conn = await aiosqlite.connect(self.database_url)
+            conn = await aiosqlite.connect(self.database_uri)
             await self.configure_security(conn)
 
             cursor = await conn.execute(sql)

@@ -11,7 +11,7 @@ class DB:
     """manages db connections"""
 
     def __init__(self):
-        self.database_url = settings.database_url
+        self.database_uri = settings.database_uri
         self.conn: aiosqlite.Connection | None = None
 
     def _authorizer(self, action, arg1, arg2, db_name, trigger_name):
@@ -52,7 +52,7 @@ class DB:
         """create tables and run a cheap query to check db connection"""
 
         try:
-            conn = aiosqlite.connect(self.database_url)
+            conn = aiosqlite.connect(self.database_uri)
             await self.configure_security(conn=conn)
 
             await conn.execute(text("SELECT 1"))

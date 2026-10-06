@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     port: int = Field(alias="PORT")
 
     database_url: str = Field(alias="DATABASE_URL")
+    database_uri: str = Field(alias="DATABASE_URI")
 
     groq_model: str = Field(alias="GROQ_MODEL")
     groq_api_key: SecretStr = Field(alias="GROQ_API_KEY")
