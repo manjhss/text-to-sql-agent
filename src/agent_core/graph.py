@@ -6,63 +6,14 @@ from src.agent_core.agents.critic import debugger_node, executor_node
 from src.agent_core.agents.generator import generator_node
 from src.agent_core.agents.planner import planner_node
 from src.agent_core.agents.schema_retriever import schema_retriever
-from src.agent_core.input_guardrail import input_guardrail_node
-from src.agent_core.intent_classifier import intent_classifier_node
+from src.agent_core.nodes.input_guardrail import input_guardrail_node
+from src.agent_core.nodes.intent_classifier import intent_classifier_node
+from src.agent_core.routes.execution import route_execution
+from src.agent_core.routes.input_guardrail import route_guardrail
+from src.agent_core.routes.intent import route_intent
 from src.agent_core.state import AgentState, default_state
 from src.config.logger import logger
 from src.config.settings import settings
-
-
-def route_intent(state: AgentState) -> Literal["relevant", "irrelevant"]:
-    """
-    determines whether to continue based on query relevance
-    """
-
-    if state.get("query_type", "irrelevant") == "irrelevant":
-        logger.warning("query is irrelevant - ending workflow")
-        return "irrelevant"
-
-    logger.info("query is relevant - proceeding to input guardrail")
-    return "relevant"
-
-
-def route_guardrail(state: AgentState) -> Literal["safe", "unsafe"]:
-    """
-    determines whether to continue based on input safety
-    """
-
-    if state.get("input_guardrail", "unsafe") == "unsafe":
-        logger.warning("input is unsafe - ending workflow")
-        return "unsafe"
-
-    logger.info("input is safe - proceeding to planner")
-    return "safe"
-
-
-def should_continue(state: AgentState) -> Literal["debug", "end"]:
-    """
-    determines the next step in the workflow after query execution.
-
-    decision flow:
-    - if max iterations reached: end with error
-    - if error occured: attempt to debug
-    """
-
-    # if max iterations reached, stop
-    if state.get("iterations", 0) >= settings.max_iterations:
-        logger.warning(
-            f"✗ max iterations ({settings.max_iterations}) reached - ending workflow"
-        )
-        return "end"
-
-    # if should_retry flag is False, stop
-    if not state.get("should_retry", True):
-        logger.warning("✗ retry flag is False - ending workflow")
-        return "end"
-
-    # otherwise, attempt correction
-    logger.info(f"↻ attempting correction (iteration {state.get('iterations', 0) + 1})")
-    return "debug"
 
 
 def build_graph() -> StateGraph:
@@ -121,7 +72,7 @@ def build_graph() -> StateGraph:
     # after execution, decide: error (debug), or give up (end)
     workflow.add_conditional_edges(
         "executor",
-        should_continue,
+        route_execution,
         {"end": END, "debug": "debugger"},
     )
 
