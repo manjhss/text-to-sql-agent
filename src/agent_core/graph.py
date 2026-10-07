@@ -1,5 +1,3 @@
-from typing import Literal
-
 from langgraph.graph import END, StateGraph
 
 from src.agent_core.agents.critic import debugger_node, executor_node
@@ -13,7 +11,6 @@ from src.agent_core.routes.input_guardrail import route_guardrail
 from src.agent_core.routes.intent import route_intent
 from src.agent_core.state import AgentState, default_state
 from src.config.logger import logger
-from src.config.settings import settings
 
 
 def build_graph() -> StateGraph:

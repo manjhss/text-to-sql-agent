@@ -78,10 +78,10 @@ class DBService(DB):
                 return None, f"syntax error: {syntax_error}"
 
             # execute query
-            conn = await aiosqlite.connect(self.database_uri)
-            await self.configure_security(conn)
+            self.conn = await aiosqlite.connect(self.database_uri)
+            await self.configure_security(conn=self.conn)
 
-            cursor = await conn.execute(sql)
+            cursor = await self.conn.execute(sql)
 
             # fetch results for SELECT queries
             if cursor.description is not None:

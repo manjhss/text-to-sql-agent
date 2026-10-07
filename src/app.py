@@ -2,7 +2,6 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from src.config.cache import cache
 from src.config.db import db
 from src.config.logger import logger
 from src.features.health.route import router as health_router
@@ -13,13 +12,11 @@ from src.features.query.route import router as query_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await db.startup()
-    cache.startup()
     logger.info("application started")
 
     yield
 
     await db.dispose()
-    cache.dispose()
     logger.info("application stopped")
 
 

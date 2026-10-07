@@ -1,7 +1,6 @@
 import sqlite3
 
 import aiosqlite
-from sqlalchemy import text
 
 from src.config.logger import logger
 from src.config.settings import settings
@@ -52,10 +51,10 @@ class DB:
         """create tables and run a cheap query to check db connection"""
 
         try:
-            conn = aiosqlite.connect(self.database_uri)
-            await self.configure_security(conn=conn)
+            self.conn = await aiosqlite.connect(self.database_uri)
+            await self.configure_security(conn=self.conn)
 
-            await conn.execute(text("SELECT 1"))
+            await self.conn.execute("SELECT 1")
             logger.info("database connection ok")
         except Exception:
             logger.exception("db startup failed")

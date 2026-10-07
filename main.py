@@ -10,7 +10,6 @@ def main():
         "src.app:app",
         host=settings.host,
         port=settings.port,
-        reload=True,
     )
 
 

@@ -15,15 +15,9 @@ class Settings(BaseSettings):
 
     groq_model: str = Field(alias="GROQ_MODEL")
     groq_api_key: SecretStr = Field(alias="GROQ_API_KEY")
-
-    ollama_host: str = Field(alias="OLLAMA_HOST")
-    embedding_model: str = Field(alias="EMBEDDING_MODEL")
+    jev_api_key: str = Field(alias="JEV_API_KEY")
 
     max_iterations: int = Field(default=3)
-
-    cache_similarity_threshold: float = Field(alias="CACHE_SIMILARITY_THRESHOLD")
-
-    jev_api_key: str = Field(alias="JEV_API_KEY")
 
     model_config = SettingsConfigDict(
         env_file=BASE_DIR / ".env",
