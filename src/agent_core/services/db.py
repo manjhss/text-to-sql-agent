@@ -89,7 +89,7 @@ class DBService(DB):
                 return rows, None
             else:
                 return (
-                    f"query executed successfully. rows affected: {result.rowcount}",
+                    f"query executed successfully. rows affected: {cursor.rowcount}",
                     None,
                 )
         except SQLAlchemyError as e:

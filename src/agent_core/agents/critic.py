@@ -160,7 +160,7 @@ class CriticAgent:
             )
 
             # clean the fixed SQL
-            from agents.generator import SQLGeneratorAgent
+            from src.agent_core.agents.generator import SQLGeneratorAgent
 
             generator = SQLGeneratorAgent()
             fixed_sql = generator._clean_sql(response.content)
